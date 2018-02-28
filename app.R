@@ -20,72 +20,69 @@ ui <- fluidPage(
    fluidRow(
      tabsetPanel(type = "tabs",
                  tabPanel("Data", plotOutput("CDtrace"),
-                          verbatimTextOutput("text")),
+                          verbatimTextOutput("text"),
+                          fluidRow(
+                            sidebarPanel(
+                              selectInput("mode",
+                                          "Which mode do you want to use?",
+                                          choices = list("Prediction" = "predict",
+                                                         "Display" = "display")
+                              )
+                              ,
+                              submitButton("Submit")
+                            )
+                            
+                            ,
+                            mainPanel(
+                              #conditional panel 
+                              conditionalPanel(
+                                condition = "input.mode == 'predict'",
+                                checkboxInput("guides", 
+                                              "Show secondary structure guides?", 
+                                              value = FALSE, 
+                                              width = NULL)
+                                ,
+                                numericInput("helix",
+                                             "% alpha helix",
+                                             min = 0,
+                                             max = 100,
+                                             step = 5,
+                                             value = 50)
+                                ,
+                                numericInput("sheet",
+                                             "% beta sheet",
+                                             min = 0,
+                                             max = 100,
+                                             step = 5,
+                                             value = 50)
+                                ,
+                                numericInput("coil",
+                                             "% random coil",
+                                             min = 0,
+                                             max = 100,
+                                             step = 5,
+                                             value = 0)
+                              )
+                              ,
+                              conditionalPanel(
+                                condition = "input.mode == 'display'",
+                                selectInput("protein",
+                                            "Pick a protein to show predicted data for",
+                                            choices = list("Lysozyme (1LYD)" = "lyso",
+                                                           "Ubiquitin (1UBQ)" = "ub",
+                                                           "BST2 (3MQB)" = "bst",
+                                                           "Hemoglobin (2HHB)" = "hemo",
+                                                           "Antibody (1IGT)" = "ab")
+                                )
+                                ,
+                                "Simulated numbers generated in YASARA using the PDB IDs indicated"
+                              )
+                              )
+                          )
+                 ),
                  tabPanel("More information",
                           includeHTML("CD.html")))
-       
-     )
-   ,
-   fluidRow(
-     sidebarPanel(
-        selectInput("mode",
-                   "Which mode do you want to use?",
-                   choices = list("Prediction" = "predict",
-                                  "Display" = "display")
-        )
-        ,
-                   submitButton("Submit")
-     )
-     
-     ,
-     mainPanel(
-         #conditional panel 
-         conditionalPanel(
-           condition = "input.mode == 'predict'",
-           checkboxInput("guides", 
-                         "Show secondary structure guides?", 
-                         value = FALSE, 
-                         width = NULL)
-           ,
-           numericInput("helix",
-                        "% alpha helix",
-                        min = 0,
-                        max = 100,
-                        step = 5,
-                        value = 50)
-           ,
-           numericInput("sheet",
-                        "% beta sheet",
-                        min = 0,
-                        max = 100,
-                        step = 5,
-                        value = 50)
-           ,
-           numericInput("coil",
-                        "% random coil",
-                        min = 0,
-                        max = 100,
-                        step = 5,
-                        value = 0)
-           )
-         ,
-         conditionalPanel(
-           condition = "input.mode == 'display'",
-           selectInput("protein",
-                       "Pick a protein to show predicted data for",
-                       choices = list("Lysozyme (1LYD)" = "lyso",
-                                      "Ubiquitin (1UBQ)" = "ub",
-                                      "BST2 (3MQB)" = "bst",
-                                      "Hemoglobin (2HHB)" = "hemo",
-                                      "Antibody (1IGT)" = "ab")
-           )
-           ,
-           "Simulated numbers generated in YASARA using the PDB IDs indicated"
-           )
-         
-         
-         )
-       ),
+     ),
    br(),
    br(),
    "Shiny app created by C.E. Berndsen, 2018",
